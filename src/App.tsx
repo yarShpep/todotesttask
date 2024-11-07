@@ -1,26 +1,46 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import AddTask from "./components/AddTask";
+import TaskList from "./components/TaskList";
+import './App.css'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface Task {
+    id: number;
+    task: string;
+    completed: boolean;
+}
+
+const App: React.FC = () => {
+    const [tasks, setTasks] = useState<Task[]>([]);
+
+    const addTask = (task: string) => {
+        const newTask: Task = {
+            id: Date.now(),
+            task,
+            completed: false
+        };
+        setTasks([newTask, ...tasks]);
+    };
+
+    const toggelTask = (id: number) => {
+        setTasks(
+            tasks.map((t) => t.id === id ? {...t, completed: !t.completed } : t
+            )
+        );
+    };
+
+    const incompleteTask = tasks.filter((t) => !t.completed);
+    const completedTask = tasks.filter((t) => t.completed);
+
+    return (
+        <div className="App">
+            <h1>ToDo</h1>
+            <AddTask onAdd={addTask} />
+            <h2>Not completed</h2>
+            <TaskList tasks={incompleteTask} onToggle={toggelTask} />
+            <h2>Completed</h2>
+            <TaskList tasks={completedTask} onToggle={toggelTask} />
+        </div>
+    );
 }
 
 export default App;
